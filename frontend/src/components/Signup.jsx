@@ -35,7 +35,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("https://oms-9hsb.onrender.com/api/signup", {
+      const response = await fetch("http://localhost:8080/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

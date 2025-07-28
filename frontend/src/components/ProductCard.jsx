@@ -11,15 +11,31 @@ import {
   Card,
 } from "@chakra-ui/react";
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ data }) => {
-
   const navigate = useNavigate();
 
+  const isAuth = useSelector((state) => state.auth.isAuth);
   const handleBuyNow = (product) => {
-  navigate("/checkout", { state: product }); // pass full product object
-};
+    if (isAuth) {
+      try {
+        // ✅ Do NOT save to localStorage here anymore
+
+        navigate("/checkout", { state: product }); // Still passing product
+      } catch (err) {
+        console.error("Buy now error:", err);
+      }
+    } else {
+      // Redirect to login with `from` and `product` in state
+      navigate("/login", {
+        state: {
+          from: { pathname: "/checkout", product },
+        },
+      });
+    }
+  };
 
   return (
     <Card maxW="sm" m={4}>
@@ -43,12 +59,13 @@ const ProductCard = ({ data }) => {
       <Divider />
       <CardFooter>
         <ButtonGroup spacing="2">
-          <Button variant="solid" colorScheme="blue" onClick={()=>handleBuyNow(data) }>
+          <Button
+            variant="solid"
+            colorScheme="blue"
+            onClick={() => handleBuyNow(data)}
+          >
             Buy now
           </Button>
-          {/* <Button variant="ghost" colorScheme="blue">
-            Add to cart
-          </Button> */}
         </ButtonGroup>
       </CardFooter>
     </Card>

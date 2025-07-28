@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post("/add-products", async (req, res) => {
   try {
-
     // for an array of objects
     // const allProducts = req.body;
     // await ProductModel.insertMany(allProducts);
@@ -25,9 +24,10 @@ router.get("/products", async (req, res) => {
     res.status(200).send(allProducts);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "Failed to fetch products", error: error.message });
+    res
+      .status(500)
+      .send({ msg: "Failed to fetch products", error: error.message });
   }
 });
 
-
-module.exports = router;  // 👈 just export the router directly
+module.exports = router; // 👈 just export the router directly

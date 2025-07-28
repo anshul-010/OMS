@@ -9,7 +9,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/AuthReducer/action"; 
+import { login } from "../redux/AuthReducer/action";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const initialData = {
   email: "",
@@ -21,33 +22,46 @@ const Login = () => {
   const [data, setData] = useState(initialData);
   const toast = useToast();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { isLoading, isError } = useSelector((state) => state.auth);
+  const from = location.state?.from?.pathname || "/";
+  const productToPass = location.state?.from?.product;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    dispatch(login(data))
+      .then(() => {
+        toast({
+          title: "Login successful!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        if (from === "/checkout" && productToPass) {
+          navigate("/checkout", { state: productToPass });
+        } else {
+          navigate(from);
+        }
+      })
+      .catch(() => {
+        toast({
+          title: "Login failed",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setData({
       ...data,
       [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    dispatch(login(data)).then(() => {
-      toast({
-        title: "Login successful!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    }).catch(() => {
-      toast({
-        title: "Login failed",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     });
   };
 

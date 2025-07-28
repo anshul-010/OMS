@@ -10,38 +10,47 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 const CheckOut = () => {
   const toast = useToast();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const product = location.state;
 
   function handleConfirmOrder() {
-  let existingOrders = [];
+    let existingOrders = [];
 
-  try {
-    const rawData = localStorage.getItem("orderData");
-    existingOrders = Array.isArray(JSON.parse(rawData)) ? JSON.parse(rawData) : [];
-  } catch (e) {
-    existingOrders = []; // fallback to empty array on error
+    try {
+      const rawData = localStorage.getItem("orderData");
+      existingOrders = Array.isArray(JSON.parse(rawData))
+        ? JSON.parse(rawData)
+        : [];
+      navigate("/");
+    } catch (e) {
+      existingOrders = []; // fallback to empty array on error
+    }
+
+    const updatedOrders = [
+      ...existingOrders,
+      {
+        ...product,
+        orderId: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        timestamp: Date.now(),
+      },
+    ];
+    localStorage.setItem("orderData", JSON.stringify(updatedOrders));
+
+    toast({
+      position: "top",
+      render: () => (
+        <Box color="white" p={3} bg="green.500">
+          Order Placed 😊
+        </Box>
+      ),
+    });
   }
-
-  const updatedOrders = [...existingOrders, product];
-
-  localStorage.setItem("orderData", JSON.stringify(updatedOrders));
-
-  toast({
-    position: 'top',
-    render: () => (
-      <Box color='white' p={3} bg='green.500'>
-        Order Placed 😊
-      </Box>
-    ),
-  });
-}
-
 
   if (!product) {
     return (
@@ -110,7 +119,12 @@ const CheckOut = () => {
         </RadioGroup>
       </Box>
 
-      <Button colorScheme="teal" mt={8} width="100%" onClick={handleConfirmOrder}>
+      <Button
+        colorScheme="teal"
+        mt={8}
+        width="100%"
+        onClick={handleConfirmOrder}
+      >
         Confirm Order
       </Button>
     </Box>
