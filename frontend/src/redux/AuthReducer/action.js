@@ -6,7 +6,7 @@ export const login = (loginObj) => (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
 
   return axios
-    .post("http://localhost:8080/api/login", loginObj)
+    .post("https://oms-9hsb.onrender.com/api/login", loginObj)
     .then((res) => {
       const { token, isStaff } = res.data;
 

@@ -11,7 +11,7 @@ function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/products");
+        const res = await axios.get("https://oms-9hsb.onrender.com/api/products");
         setData(res.data);
         setLoading(false);
       } catch (error) {
